@@ -1,0 +1,23 @@
+Build the Docker image:
+
+sh
+docker build -t my-java-app .
+Run the Docker container:
+
+sh
+docker run --rm my-java-app
+Here's a brief rundown of what each section in the Dockerfile does:
+
+FROM maven:3.8.6-openjdk-11 AS build: Uses the Maven image with OpenJDK 11 to build the application.
+
+WORKDIR /app: Sets the working directory inside the container.
+
+COPY pom.xml . and COPY src ./src: Copies the Maven project files into the container.
+
+RUN mvn clean package: Builds the project using Maven.
+
+FROM openjdk:11-jre-slim: Uses the OpenJDK 11 JRE image to run the application.
+
+COPY --from=build /app/target/my-java-app-1.0-SNAPSHOT.jar my-java-app.jar: Copies the built JAR file from the build stage.
+
+ENTRYPOINT ["java", "-jar", "my-java-app.jar"]: Specifies the command to run the application.
